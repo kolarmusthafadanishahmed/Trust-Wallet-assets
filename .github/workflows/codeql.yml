@@ -1,0 +1,37 @@
+name: "CodeQL"
+
+# Run on pushes to main/master and on PRs; scheduled weekly scan as well
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+    branches: ["main", "master"]
+  schedule:
+    - cron: '0 2 * * 0' # Weekly at 02:00 UTC on Sunday
+
+permissions:
+  actions: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          # Adjust languages as needed. If omitted, CodeQL will attempt to auto-detect.
+          languages: "javascript,typescript,python,go"
+
+      - name: Autobuild (recommended)
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Run CodeQL analysis
+        uses: github/codeql-action/analyze@v2
+        # If you want SARIF upload or additional config, add inputs here:
+        # with:
+        #   output: results.sarif
