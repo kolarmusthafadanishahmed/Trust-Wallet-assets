@@ -1,0 +1,47 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+  schedule:
+    - cron: '0 3 * * 0' # weekly on Sundays at 03:00 UTC
+
+permissions:
+  actions: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ "javascript", "python", "go", "java", "csharp", "ruby" ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          # languages from the matrix; adjust list if your repo uses fewer languages
+          languages: ${{ matrix.language }}
+          # optional: uncomment and provide a custom CodeQL config if you have one
+          # config-file: .github/codeql/codeql-config.yml
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+        # For repositories that do not have a standard build step (e.g., asset-only repos),
+        # autobuild may be a no-op. Add custom build steps before the Analyze step if needed.
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          # If you want SARIF upload or custom queries, configure here.
+          # For most cases the default configuration is sufficient.
+          # upload: true
+          # category: ${{ matrix.language }}
+          pass
